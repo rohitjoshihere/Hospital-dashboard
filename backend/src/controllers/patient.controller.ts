@@ -25,11 +25,19 @@ const UpdatePatientSchema = z.object({
 
 const ListQuerySchema = z.object({
   q: z.string().optional(),
-  tags: z.string().optional(), // comma-separated
-  from: z.string().optional(),
-  to: z.string().optional(),
+  tags: z.string().optional(), // comma-separated tag names
+  from: z
+    .string()
+    .optional()
+    .refine((v) => !v || !isNaN(Date.parse(v)), { message: 'from must be a valid ISO date' }),
+  to: z
+    .string()
+    .optional()
+    .refine((v) => !v || !isNaN(Date.parse(v)), { message: 'to must be a valid ISO date' }),
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(20),
+  sortBy: z.enum(['name', 'createdAt']).optional().default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
 export async function list(req: Request, res: Response): Promise<void> {
@@ -39,17 +47,19 @@ export async function list(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { q, tags, from, to, page, limit } = parsed.data;
+  const { q, tags, from, to, page, limit, sortBy, sortOrder } = parsed.data;
   const user = req.user!;
 
   try {
     const result = await listPatients({
       q,
-      tags: tags ? tags.split(',').map((t) => t.trim()) : undefined,
+      tags: tags ? tags.split(',').map((t) => t.trim()).filter(Boolean) : undefined,
       from,
       to,
       page,
       limit,
+      sortBy,
+      sortOrder,
       requestingUserId: user.userId,
       requestingUserRole: user.role,
     });
