@@ -27,7 +27,9 @@ services:
 
   api:
     build: ./backend
-    command: npx ts-node server.ts
+    # Run migrations then start the API server
+    entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
+    command: ["npx", "ts-node", "server.ts"]
     restart: unless-stopped
     depends_on:
       postgres:
@@ -43,12 +45,13 @@ services:
       NODE_ENV: ${NODE_ENV:-development}
     volumes:
       - media_files:/app/uploads
+      - thumb_files:/app/thumbnails
     ports:
       - "3001:3001"
 
   worker:
     build: ./backend
-    command: npx ts-node worker.ts
+    command: ["npx", "ts-node", "worker.ts"]
     restart: unless-stopped
     depends_on:
       postgres:
@@ -62,6 +65,7 @@ services:
       NODE_ENV: ${NODE_ENV:-development}
     volumes:
       - media_files:/app/uploads
+      - thumb_files:/app/thumbnails
 
   frontend:
     build: ./frontend
@@ -74,3 +78,4 @@ services:
 volumes:
   postgres_data:
   media_files:
+  thumb_files:
