@@ -2,7 +2,6 @@ import { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { X, UserPlus, Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { createDoctor } from '../api/doctors';
-import { cn } from '../lib/utils';
 
 interface Props {
   onClose: () => void;

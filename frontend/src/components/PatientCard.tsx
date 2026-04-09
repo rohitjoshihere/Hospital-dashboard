@@ -12,13 +12,13 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Clock,
-  AlertCircle,
   Activity,
   Loader2
 } from 'lucide-react';
 import MediaUpload from './MediaUpload';
 import PatientFormModal from './PatientFormModal';
-import { deletePatient, Patient } from '../api/patients';
+import MediaViewerModal from './MediaViewerModal';
+import { deletePatient, Patient, MediaItem } from '../api/patients';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
@@ -27,9 +27,17 @@ interface Props {
   onRefresh: () => void;
 }
 
-function toMediaUrl(thumbPath: string): string {
-  // Use environment variable or window.location if possible, for now keeping localhost
-  return `http://localhost:3001${thumbPath}`;
+function toMediaUrl(filePath: string): string {
+  if (!filePath) return '';
+  // Handle absolute container paths like /app/uploads/... or /app/thumbnails/...
+  const uploadsMatch = filePath.match(/[/\\]uploads[/\\](.+)$/);
+  const thumbsMatch = filePath.match(/[/\\]thumbnails[/\\](.+)$/);
+  
+  if (uploadsMatch) return `/uploads/${uploadsMatch[1]}`;
+  if (thumbsMatch) return `/thumbnails/${thumbsMatch[1]}`;
+  
+  // Already a relative URL like /thumbnails/...
+  return filePath.startsWith('/') ? filePath : `/${filePath}`;
 }
 
 export default function PatientCard({ patient, onRefresh }: Props) {
@@ -38,7 +46,8 @@ export default function PatientCard({ patient, onRefresh }: Props) {
   const [showEdit, setShowEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
+console.log(patient)
   async function handleDelete() {
     if (!confirm(`Are you sure you want to delete patient "${patient.name}"? This action cannot be undone.`)) return;
     setDeleting(true);
@@ -54,6 +63,7 @@ export default function PatientCard({ patient, onRefresh }: Props) {
 
   const completedMedia = patient.media?.filter((m) => m.status === 'COMPLETED') ?? [];
   const processingMedia = patient.media?.filter((m) => m.status !== 'COMPLETED') ?? [];
+                console.log(completedMedia)
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
@@ -105,7 +115,7 @@ export default function PatientCard({ patient, onRefresh }: Props) {
         <div className="flex flex-wrap gap-2 mt-4">
           {patient.tags.length > 0 ? (
             patient.tags.map(({ tag }) => (
-              <span key={tag.id} className="flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+              <span key={tag.id} className="flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full tracking-wider">
                 <TagIcon className="w-2.5 h-2.5" />
                 {tag.name}
               </span>
@@ -178,7 +188,14 @@ export default function PatientCard({ patient, onRefresh }: Props) {
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
                 {completedMedia.map((m) => (
-                  <div key={m.id} className="group relative aspect-square bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer">
+                  <div 
+                    key={m.id} 
+                    onClick={() => {
+                      console.log('Opening media:', m);
+                      setSelectedMedia(m);
+                    }}
+                    className="group relative aspect-square bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer"
+                  >
                     {m.thumbPath ? (
                       <img
                         src={toMediaUrl(m.thumbPath)}
@@ -217,6 +234,15 @@ export default function PatientCard({ patient, onRefresh }: Props) {
           onSaved={onRefresh}
         />
       )}
+
+      <AnimatePresence>
+        {selectedMedia && (
+          <MediaViewerModal 
+            media={selectedMedia} 
+            onClose={() => setSelectedMedia(null)} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

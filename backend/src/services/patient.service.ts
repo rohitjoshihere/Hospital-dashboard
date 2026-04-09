@@ -46,11 +46,12 @@ function buildWhereClause(filters: PatientFilters): Prisma.PatientWhereInput {
     where.name = { contains: filters.q.trim(), mode: 'insensitive' };
   }
 
-  // Tag filter — patient must have at least one matching tag
+  // Tag filter — case-insensitive, normalize input to lowercase
   if (filters.tags && filters.tags.length > 0) {
+    const normalizedTags = filters.tags.map((t) => t.toLowerCase());
     where.tags = {
       some: {
-        tag: { name: { in: filters.tags } },
+        tag: { name: { in: normalizedTags } },
       },
     };
   }
@@ -90,6 +91,7 @@ export async function listPatients(filters: PatientFilters) {
             id: true,
             type: true,
             status: true,
+            filePath: true,
             thumbPath: true,
             uploadedAt: true,
           },
@@ -118,6 +120,7 @@ export async function getPatientById(
           id: true,
           type: true,
           status: true,
+          filePath: true,
           thumbPath: true,
           uploadedAt: true,
           processedAt: true,
@@ -142,9 +145,9 @@ export async function createPatient(input: CreatePatientInput) {
   const tagRecords = await Promise.all(
     tags.map((tagName) =>
       prisma.tag.upsert({
-        where: { name: tagName },
+        where: { name: tagName.toLowerCase() },
         update: {},
-        create: { name: tagName },
+        create: { name: tagName.toLowerCase() },
       })
     )
   );
@@ -172,9 +175,9 @@ export async function updatePatient(id: string, input: UpdatePatientInput) {
     const tagRecords = await Promise.all(
       tags.map((tagName) =>
         prisma.tag.upsert({
-          where: { name: tagName },
+          where: { name: tagName.toLowerCase() },
           update: {},
-          create: { name: tagName },
+          create: { name: tagName.toLowerCase() },
         })
       )
     );

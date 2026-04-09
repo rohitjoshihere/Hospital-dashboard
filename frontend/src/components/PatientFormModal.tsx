@@ -1,9 +1,8 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, User, Calendar, Stethoscope, Tag, Loader2, AlertCircle, Edit2, UserPlus } from 'lucide-react';
 import { getDoctors, Doctor } from '../api/doctors';
 import { createPatient, updatePatient, Patient } from '../api/patients';
-import { cn } from '../lib/utils';
 
 interface Props {
   patient?: Patient;

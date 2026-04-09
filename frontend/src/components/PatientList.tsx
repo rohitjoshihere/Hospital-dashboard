@@ -8,7 +8,6 @@ import PatientFormModal from './PatientFormModal';
 import CreateDoctorModal from './CreateDoctorModal';
 import { useAuth } from '../context/AuthContext';
 import { Patient } from '../api/patients';
-import { cn } from '../lib/utils';
 
 interface PaginatedResponse {
   data: Patient[];
@@ -57,26 +56,26 @@ export default function PatientList() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="flex flex-col space-y-6 px-4 py-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-bold text-slate-900">Patient Directory</h3>
-            <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                {total} Total
-            </span>
+          <Users className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-bold text-slate-900">Patient Directory</h3>
+          <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
+            {total} Total
+          </span>
         </div>
-        
+
         {isAdmin && (
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => setShowCreateDoctor(true)}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm"
             >
               <UserPlus className="w-4 h-4" />
               Add Doctor
             </button>
-            <button 
+            <button
               onClick={() => setShowCreatePatient(true)}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md shadow-blue-100"
             >
@@ -125,18 +124,18 @@ export default function PatientList() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-6 border-t border-slate-100">
           <p className="text-sm text-slate-500">
-            Showing <span className="font-semibold text-slate-900">{(page-1)*limit + 1}</span> to <span className="font-semibold text-slate-900">{Math.min(page*limit, total)}</span> of <span className="font-semibold text-slate-900">{total}</span> results
+            Showing <span className="font-semibold text-slate-900">{(page - 1) * limit + 1}</span> to <span className="font-semibold text-slate-900">{Math.min(page * limit, total)}</span> of <span className="font-semibold text-slate-900">{total}</span> results
           </p>
           <div className="flex gap-2">
-            <button 
-              disabled={page === 1} 
+            <button
+              disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
               className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <button 
-              disabled={page === totalPages} 
+            <button
+              disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
               className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
@@ -156,7 +155,7 @@ export default function PatientList() {
       {showCreateDoctor && (
         <CreateDoctorModal
           onClose={() => setShowCreateDoctor(false)}
-          onCreated={() => {}}
+          onCreated={() => { }}
         />
       )}
     </div>

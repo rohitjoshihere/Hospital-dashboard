@@ -53,7 +53,7 @@ export async function list(req: Request, res: Response): Promise<void> {
   try {
     const result = await listPatients({
       q,
-      tags: tags ? tags.split(',').map((t) => t.trim()).filter(Boolean) : undefined,
+      tags: tags ? tags.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean) : undefined,
       from,
       to,
       page,

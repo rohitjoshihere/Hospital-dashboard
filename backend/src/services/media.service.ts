@@ -62,7 +62,7 @@ export async function saveAndEnqueue(
   const media = await prisma.media.create({
     data: {
       patientId,
-      filePath: file.path,
+      filePath: `/uploads/${file.filename}`,
       type,
       status: 'PENDING',
     },
@@ -88,6 +88,7 @@ export async function getMediaStatus(mediaId: string) {
       id: true,
       status: true,
       type: true,
+      filePath: true,
       thumbPath: true,
       metadata: true,
       uploadedAt: true,

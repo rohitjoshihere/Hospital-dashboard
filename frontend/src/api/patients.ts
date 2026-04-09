@@ -4,6 +4,7 @@ export interface MediaItem {
   id: string;
   type: 'IMAGE' | 'VIDEO';
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  filePath: string;
   thumbPath: string | null;
   uploadedAt: string;
 }

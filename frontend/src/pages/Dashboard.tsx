@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LogOut, User, Activity, Search, Bell, Menu } from 'lucide-react';
+import { LogOut, User, Activity, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PatientList from '../components/PatientList';
 
@@ -25,14 +25,14 @@ export default function Dashboard() {
         </div>
 
         <div className="flex-1 max-w-md mx-8 hidden md:block">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               type="text" 
               placeholder="Search patients, records..."
               className="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
             />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex items-center gap-4">
@@ -74,18 +74,18 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-slate-900">Patient Overview</h2>
               <p className="text-slate-500 mt-1">Manage and track your patient records efficiently.</p>
             </div>
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               <button className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 shadow-sm transition-all active:scale-95">
                 Export Data
               </button>
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all active:scale-95">
                 + New Patient
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Stats Section Placeholder */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
               { label: 'Total Patients', value: '1,284', change: '+12%', color: 'blue' },
               { label: 'Appointments', value: '42', change: 'Today', color: 'green' },
@@ -104,7 +104,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <PatientList />
@@ -113,7 +113,7 @@ export default function Dashboard() {
       </main>
       
       <footer className="py-6 px-6 border-t border-slate-200 bg-white text-center text-slate-400 text-sm">
-        © 2024 MedCore Health Systems. All rights reserved.
+        Made with ❤️ by <a className='hover:text-slate-500' href="https://www.linkedin.com/in/rohitjoshihere/" target="_blank" rel="noopener noreferrer">Rohit</a>
       </footer>
     </div>
   );
