@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { logger } from './config/logger';
 import authRoutes from './routes/auth.routes';
+import patientRoutes from './routes/patient.routes';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
+app.use('/api/patients', patientRoutes);
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req: Request, res: Response): void => {
