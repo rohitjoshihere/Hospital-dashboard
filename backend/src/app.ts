@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ── Request logging middleware ────────────────────────────────────────────────
+// ── Request logging ───────────────────────────────────────────────────────────
 app.use((req: Request, res: Response, next: NextFunction): void => {
   const start = Date.now();
   res.on('finish', () => {
@@ -26,7 +26,7 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 
-// ── 404 handler ───────────────────────────────────────────────────────────────
+// ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req: Request, res: Response): void => {
   res.status(404).json({ message: 'Route not found' });
 });

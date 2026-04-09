@@ -7,7 +7,6 @@ export interface JwtPayload {
   role: 'ADMIN' | 'DOCTOR';
 }
 
-// Extend Express Request to carry the decoded user
 declare global {
   namespace Express {
     interface Request {

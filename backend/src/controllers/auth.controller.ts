@@ -45,7 +45,10 @@ export async function register(req: Request, res: Response): Promise<void> {
     logger.info('User registered', { userId: user.id, role: user.role });
     res.status(201).json({ user });
   } catch (err) {
-    logger.error('Register failed', { message: (err as Error).message, stack: (err as Error).stack });
+    logger.error('Register failed', {
+      message: (err as Error).message,
+      stack: (err as Error).stack,
+    });
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -84,7 +87,10 @@ export async function login(req: Request, res: Response): Promise<void> {
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
-    logger.error('Login failed', { message: (err as Error).message, stack: (err as Error).stack });
+    logger.error('Login failed', {
+      message: (err as Error).message,
+      stack: (err as Error).stack,
+    });
     res.status(500).json({ message: 'Internal server error' });
   }
 }
