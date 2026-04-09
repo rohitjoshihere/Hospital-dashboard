@@ -1,9 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { logger } from './config/logger';
+import { requestLogger } from './middleware/requestLogger';
+import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth.routes';
 import patientRoutes from './routes/patient.routes';
 import mediaRoutes from './routes/media.routes';
+import { logger } from './config/logger';
 
 const app = express();
 
@@ -11,19 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ── Request logging ───────────────────────────────────────────────────────────
-app.use((req: Request, res: Response, next: NextFunction): void => {
-  const start = Date.now();
-  res.on('finish', () => {
-    logger.info('HTTP request', {
-      method: req.method,
-      url: req.originalUrl,
-      statusCode: res.statusCode,
-      responseTimeMs: Date.now() - start,
-    });
-  });
-  next();
-});
+// ── Structured request logging ────────────────────────────────────────────────
+app.use(requestLogger);
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -35,14 +26,17 @@ app.use((_req: Request, res: Response): void => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// ── Centralized error handler ─────────────────────────────────────────────────
-app.use((err: Error, req: Request, res: Response, _next: NextFunction): void => {
-  logger.error('Unhandled error', {
-    route: req.originalUrl,
-    message: err.message,
-    stack: err.stack,
-  });
-  res.status(500).json({ message: 'Internal server error' });
+// ── Centralized error handler (must be last) ──────────────────────────────────
+app.use(errorHandler);
+
+// Handle uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (err: Error) => {
+  logger.error('Uncaught exception', { message: err.message, stack: err.stack });
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: unknown) => {
+  logger.error('Unhandled rejection', { reason });
 });
 
 export default app;
