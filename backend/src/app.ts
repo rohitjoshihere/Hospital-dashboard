@@ -1,11 +1,14 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth.routes';
 import patientRoutes from './routes/patient.routes';
 import mediaRoutes from './routes/media.routes';
+import doctorRoutes from './routes/doctor.routes';
 import { logger } from './config/logger';
+import { config } from './config';
 
 const app = express();
 
@@ -13,12 +16,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ── Static file serving for uploads and thumbnails ───────────────────────────
+app.use('/uploads', express.static(path.resolve(config.uploadDir)));
+app.use('/thumbnails', express.static(path.resolve(config.uploadDir, '..', 'thumbnails')));
+
 // ── Structured request logging ────────────────────────────────────────────────
 app.use(requestLogger);
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
+app.use('/api/doctors', doctorRoutes);
 app.use('/api', mediaRoutes);
 
 // ── 404 ───────────────────────────────────────────────────────────────────────

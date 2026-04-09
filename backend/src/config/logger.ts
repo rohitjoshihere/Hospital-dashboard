@@ -9,8 +9,12 @@ const devFormat = combine(
   colorize({ all: true }),
   timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   errors({ stack: true }),
-  printf((info: { level: string; message: string; timestamp?: string; stack?: string; [key: string]: unknown }) => {
-    const { level, message, timestamp: ts, stack, ...meta } = info;
+  printf((info) => {
+    const level = info.level as string;
+    const message = info.message as string;
+    const ts = info['timestamp'] as string | undefined;
+    const stack = info['stack'] as string | undefined;
+    const { level: _l, message: _m, timestamp: _t, stack: _s, ...meta } = info;
     const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
     return `${ts} [${level}]: ${stack ?? message}${metaStr}`;
   })

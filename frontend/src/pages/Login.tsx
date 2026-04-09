@@ -1,7 +1,10 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { LayoutDashboard, Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
 import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { cn } from '../lib/utils';
 
 export default function Login() {
   const { login } = useAuth();
@@ -30,44 +33,91 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Medical Dashboard</h2>
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <label style={styles.label}>Email</label>
-          <input
-            style={styles.input}
-            type="email"
-            value={email}
-            onChange={(e: import('react').ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            required
-            autoFocus
-          />
-          <label style={styles.label}>Password</label>
-          <input
-            style={styles.input}
-            type="password"
-            value={password}
-            onChange={(e: import('react').ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            required
-          />
-          {error && <p style={styles.error}>{error}</p>}
-          <button style={styles.button} type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-      </div>
+    <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
+              <LayoutDashboard className="text-white w-6 h-6" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900">Welcome Back</h2>
+            <p className="text-slate-500 text-sm mt-1">Sign in to your medical dashboard</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-slate-400" />
+                Email Address
+              </label>
+              <input
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 text-slate-900"
+                type="email"
+                placeholder="doctor@hospital.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-slate-400" />
+                Password
+              </label>
+              <input
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 text-slate-900"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100"
+              >
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </motion.div>
+            )}
+
+            <button 
+              className={cn(
+                "w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 active:scale-[0.98]",
+                loading && "opacity-70 cursor-not-allowed"
+              )} 
+              type="submit" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-xs text-slate-400">
+              Authorized personnel only. All access is logged.
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
-
-const styles: Record<string, import('react').CSSProperties> = {
-  container: { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f0f2f5' },
-  card: { background: '#fff', padding: '2rem', borderRadius: '8px', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', width: '100%', maxWidth: '380px' },
-  title: { margin: '0 0 1.5rem', textAlign: 'center', fontSize: '1.4rem', color: '#1a1a2e' },
-  form: { display: 'flex', flexDirection: 'column', gap: '0.75rem' },
-  label: { fontSize: '0.85rem', fontWeight: 600, color: '#444' },
-  input: { padding: '0.6rem 0.8rem', border: '1px solid #ccc', borderRadius: '4px', fontSize: '0.95rem' },
-  button: { marginTop: '0.5rem', padding: '0.7rem', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer' },
-  error: { color: '#dc2626', fontSize: '0.85rem', margin: 0 },
-};

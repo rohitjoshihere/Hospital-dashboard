@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
-import { PrismaClient, MediaType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { config } from '../config';
 import { mediaQueue } from '../queues/mediaQueue';
 import { logger } from '../config/logger';
+
+type MediaType = 'IMAGE' | 'VIDEO';
 
 const prisma = new PrismaClient();
 

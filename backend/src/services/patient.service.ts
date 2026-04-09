@@ -85,6 +85,16 @@ export async function listPatients(filters: PatientFilters) {
       include: {
         tags: { include: { tag: { select: { id: true, name: true } } } },
         doctor: { select: { id: true, name: true, email: true } },
+        media: {
+          select: {
+            id: true,
+            type: true,
+            status: true,
+            thumbPath: true,
+            uploadedAt: true,
+          },
+          orderBy: { uploadedAt: 'desc' },
+        },
       },
     }),
     prisma.patient.count({ where }),

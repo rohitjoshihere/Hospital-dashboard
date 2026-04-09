@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import './index.css';
 
 function PrivateRoute({ children }: { children: import('react').ReactNode }) {
   const { token } = useAuth();

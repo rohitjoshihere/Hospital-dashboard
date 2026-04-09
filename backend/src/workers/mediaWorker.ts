@@ -25,6 +25,12 @@ function buildThumbPath(filePath: string, ext: string): string {
   return path.join(thumbsDir, `${basename}-thumb${ext}`);
 }
 
+// Returns the web-accessible relative URL for the thumbnail
+function buildThumbUrl(filePath: string, ext: string): string {
+  const basename = path.basename(filePath, path.extname(filePath));
+  return `/thumbnails/${basename}-thumb${ext}`;
+}
+
 async function processImage(filePath: string, thumbPath: string): Promise<sharp.Metadata> {
   await sharp(filePath)
     .resize(300, 300, { fit: 'cover' })
@@ -63,14 +69,15 @@ export const mediaWorker = new Worker<MediaJobData>(
     try {
       if (type === 'IMAGE') {
         const thumbPath = buildThumbPath(filePath, '.jpg');
+        const thumbUrl = buildThumbUrl(filePath, '.jpg');
         const metadata = await processImage(filePath, thumbPath);
 
         await prisma.media.update({
           where: { id: mediaId },
           data: {
             status: 'COMPLETED',
-            thumbPath,
-            metadata: metadata as Record<string, unknown>,
+            thumbPath: thumbUrl,
+            metadata: JSON.parse(JSON.stringify(metadata)),
             processedAt: new Date(),
           },
         });
@@ -78,13 +85,14 @@ export const mediaWorker = new Worker<MediaJobData>(
         logger.info('Worker job completed', { jobId: job.id, mediaId, type: 'IMAGE' });
       } else {
         const thumbPath = buildThumbPath(filePath, '.jpg');
+        const thumbUrl = buildThumbUrl(filePath, '.jpg');
         await processVideo(filePath, thumbPath);
 
         await prisma.media.update({
           where: { id: mediaId },
           data: {
             status: 'COMPLETED',
-            thumbPath,
+            thumbPath: thumbUrl,
             processedAt: new Date(),
           },
         });

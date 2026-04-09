@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2563eb;
+  --color-secondary: #64748b;
+  --color-accent: #10b981;
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-lg font-medium transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden;
+  }
+}

@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 
-# ffmpeg required for video thumbnail extraction
-RUN apk add --no-cache ffmpeg
+# ffmpeg for video thumbnails, openssl for Prisma on alpine/musl
+RUN apk add --no-cache ffmpeg openssl openssl-dev
 
 WORKDIR /app
 
