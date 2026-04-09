@@ -1,0 +1,83 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(DOCTOR)
+  patients     Patient[]
+  createdAt    DateTime  @default(now())
+}
+
+model Patient {
+  id               String       @id @default(cuid())
+  name             String
+  dob              DateTime?
+  assignedDoctorId String
+  doctor           User         @relation(fields: [assignedDoctorId], references: [id])
+  tags             PatientTag[]
+  media            Media[]
+  createdAt        DateTime     @default(now())
+
+  @@index([name])
+  @@index([createdAt])
+  @@index([assignedDoctorId])
+}
+
+model Tag {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  patients PatientTag[]
+
+  @@index([name])
+}
+
+model PatientTag {
+  patientId String
+  tagId     String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([patientId, tagId])
+}
+
+model Media {
+  id          String    @id @default(cuid())
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  filePath    String
+  thumbPath   String?
+  type        MediaType
+  status      JobStatus @default(PENDING)
+  metadata    Json?
+  uploadedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  @@index([patientId])
+  @@index([status])
+}
