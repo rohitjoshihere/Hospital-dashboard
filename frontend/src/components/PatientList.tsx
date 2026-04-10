@@ -8,6 +8,7 @@ import PatientFormModal from './PatientFormModal';
 import CreateDoctorModal from './CreateDoctorModal';
 import { useAuth } from '../context/AuthContext';
 import { Patient } from '../api/patients';
+import { cn } from '../lib/utils';
 
 interface PaginatedResponse {
   data: Patient[];
@@ -91,7 +92,7 @@ export default function PatientList() {
       </div>
 
       <div className="min-h-[400px] flex flex-col">
-        {loading ? (
+        {loading && patients.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center py-20 text-slate-400">
             <Loader2 className="w-10 h-10 animate-spin mb-4" />
             <p className="font-medium">Fetching patient records...</p>
@@ -103,7 +104,7 @@ export default function PatientList() {
             <p className="text-sm mt-1">Try adjusting your search filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <div className={cn("grid grid-cols-1 gap-4 transition-opacity", loading && "opacity-60")}>
             <AnimatePresence mode="popLayout">
               {patients.map((p, i) => (
                 <motion.div

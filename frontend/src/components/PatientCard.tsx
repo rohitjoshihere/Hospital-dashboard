@@ -33,11 +33,12 @@ function toMediaUrl(filePath: string): string {
   const uploadsMatch = filePath.match(/[/\\]uploads[/\\](.+)$/);
   const thumbsMatch = filePath.match(/[/\\]thumbnails[/\\](.+)$/);
   
-  if (uploadsMatch) return `/uploads/${uploadsMatch[1]}`;
-  if (thumbsMatch) return `/thumbnails/${thumbsMatch[1]}`;
+  if (uploadsMatch) return `http://localhost:3001/uploads/${uploadsMatch[1]}`;
+  if (thumbsMatch) return `http://localhost:3001/thumbnails/${thumbsMatch[1]}`;
   
   // Already a relative URL like /thumbnails/...
-  return filePath.startsWith('/') ? filePath : `/${filePath}`;
+  if (filePath.startsWith('/')) return `http://localhost:3001${filePath}`;
+  return `http://localhost:3001/${filePath}`;
 }
 
 export default function PatientCard({ patient, onRefresh }: Props) {
@@ -47,7 +48,6 @@ export default function PatientCard({ patient, onRefresh }: Props) {
   const [deleting, setDeleting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
-console.log(patient)
   async function handleDelete() {
     if (!confirm(`Are you sure you want to delete patient "${patient.name}"? This action cannot be undone.`)) return;
     setDeleting(true);
@@ -63,7 +63,6 @@ console.log(patient)
 
   const completedMedia = patient.media?.filter((m) => m.status === 'COMPLETED') ?? [];
   const processingMedia = patient.media?.filter((m) => m.status !== 'COMPLETED') ?? [];
-                console.log(completedMedia)
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">

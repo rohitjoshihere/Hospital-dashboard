@@ -74,6 +74,18 @@ docker compose up --build
 | Frontend | http://localhost:5173  |
 | API      | http://localhost:3001  |
 
+### Database Initialization (First Time Only)
+
+If you are running this for the first time or on a fresh pull, you must initialize the database and seed it with default users:
+
+```bash
+# 1. Sync the schema (creates tables)
+docker compose exec api npx prisma db push
+
+# 2. Seed the data (default users & patients)
+docker compose exec api npm run seed
+```
+
 ### Run locally (without Docker)
 
 **Backend:**
@@ -111,6 +123,10 @@ npm run dev
 |--------|------------------------|-------------------------------------------|
 | POST   | /api/auth/register     | `{ name, email, password, role? }`        |
 | POST   | /api/auth/login        | `{ email, password }` → `{ token, user }` |
+
+**Default Credentials (after seeding):**
+- **ADMIN**: `admin@hospital.com` / `admin123`
+- **DOCTOR**: `doctor@hospital.com` / `doctor123`
 
 ### Patients (JWT required)
 

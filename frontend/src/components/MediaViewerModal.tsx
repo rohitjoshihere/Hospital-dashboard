@@ -14,9 +14,8 @@ function toMediaUrl(filePath: string): string {
   const thumbsMatch = filePath.match(/[/\\]thumbnails[/\\](.+)$/);
   if (uploadsMatch) return `http://localhost:3001/uploads/${uploadsMatch[1]}`;
   if (thumbsMatch) return `http://localhost:3001/thumbnails/${thumbsMatch[1]}`;
-  // Already a relative URL like /thumbnails/...
   if (filePath.startsWith('/')) return `http://localhost:3001${filePath}`;
-  return filePath;
+  return `http://localhost:3001/${filePath}`;
 }
 
 export default function MediaViewerModal({ media, onClose }: Props) {

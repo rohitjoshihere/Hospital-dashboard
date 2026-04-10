@@ -28,7 +28,6 @@ export default function PatientCard({ patient, onRefresh }) {
     const [deleting, setDeleting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState(null);
-    console.log(patient);
     async function handleDelete() {
         if (!confirm(`Are you sure you want to delete patient "${patient.name}"? This action cannot be undone.`))
             return;
