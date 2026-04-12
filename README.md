@@ -64,7 +64,7 @@ medical-dashboard/
 
 ```bash
 git clone <repo-url>
-cd medical-dashboard
+cd Hospital-dashboard
 cp .env.example .env        # edit JWT_SECRET and passwords as needed
 docker compose up --build
 ```
